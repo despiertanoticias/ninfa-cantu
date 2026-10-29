@@ -9,6 +9,7 @@
   <title>{{ t }}</title>
   <meta name="description" content="{{ d }}">
   <link rel="canonical" href="{{ sitio.url }}{{ url }}">
+  <meta name="robots" content="{{ 'index, follow' if indexable else 'noindex, follow' }}">
   <meta property="og:type" content="{{ og_tipo or 'website' }}">
   <meta property="og:locale" content="es_MX">
   <meta property="og:site_name" content="{{ perfil.nombre }}">

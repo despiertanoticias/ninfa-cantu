@@ -139,8 +139,11 @@ def compilar():
 
     base = dict(datos, sitio=sitio, notas=notas, categorias=categorias, recientes=notas[:6])
 
+    indexar_todo = bool(sitio.get("indexar_sitio"))
+    ruta_ap = "/" + slugify((datos.get("apartado") or {}).get("ruta") or "archivo") + "/"
+
     def pag(plantilla, url, **extra):
-        ctx = dict(base, url=url, **extra)
+        ctx = dict(base, url=url, indexable=indexar_todo or url.startswith(ruta_ap), **extra)
         escribir(url, env.get_template(plantilla).render(**ctx))
 
     porcat = {c.nombre: [n for n in notas if n.categoria == c.nombre] for c in categorias}
@@ -179,7 +182,7 @@ def compilar():
         for x in ap_notas:
             pag("apartado_nota.html", x.url, titulo=x.titulo, descripcion=x.resumen or x.titulo,
                 apartado=apartado, ap_base=ap_base, ap_nota=x, ap_notas=ap_notas)
-    escribir_llms(url_sitio, datos, notas, apartado, ap_base, ap_notas)
+    escribir_llms(url_sitio, datos, notas if indexar_todo else [], apartado, ap_base, ap_notas, indexar_todo)
 
     # RSS, sitemap y robots
     items = "".join(
@@ -189,6 +192,8 @@ def compilar():
     escribir("/feed.xml", f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{escape(sitio.titulo)}</title>'
                           f"<link>{url_sitio}/</link><description>{escape(sitio.descripcion)}</description><language>es-MX</language>{items}</channel></rss>")
     urls = ["/", "/biografia/", "/trayectoria/", "/noticias/", "/contacto/"] + [f"/noticias/{c.slug}/" for c in categorias] + [n.url for n in notas]
+    if not indexar_todo:
+        urls = []  # mientras el sitio esté en noindex, el sitemap solo lista el apartado
     if ap_notas:
         urls += [ap_base] + [x.url for x in ap_notas]
     escribir("/sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
@@ -212,31 +217,37 @@ def cargar_apartado():
     return lista
 
 
-def escribir_llms(url_sitio, datos, notas, apartado, ap_base, ap_notas):
+def escribir_llms(url_sitio, datos, notas, apartado, ap_base, ap_notas, indexar_todo=True):
     """llms.txt (índice) y llms-full.txt (texto completo) para asistentes de IA."""
     p, t = datos["perfil"], datos.get("trayectoria") or Obj(cargos=[])
     cab = [f"# {p.nombre}", "", f"> {p.cargo_actual}. {p.bio_corta}", ""]
-    idx = cab + ["## Páginas principales",
-                 f"- [Biografía]({url_sitio}/biografia/): trayectoria personal y profesional",
-                 f"- [Trayectoria]({url_sitio}/trayectoria/): cargos ocupados",
-                 f"- [Noticias]({url_sitio}/noticias/): {len(notas)} notas con fuente enlazada", ""]
+    idx = list(cab)
+    if indexar_todo:
+        idx += ["## Páginas principales",
+                f"- [Biografía]({url_sitio}/biografia/): trayectoria personal y profesional",
+                f"- [Trayectoria]({url_sitio}/trayectoria/): cargos ocupados",
+                f"- [Noticias]({url_sitio}/noticias/): {len(notas)} notas con fuente enlazada", ""]
     if ap_notas:
         idx += [f"## {apartado.get('nombre') or 'Archivo informativo'}"]
         idx += [f"- [{x.titulo}]({url_sitio}{x.url}): {x.resumen}" for x in ap_notas] + [""]
-    idx += ["## Noticias"] + [f"- [{n.titulo}]({url_sitio}{n.url}) ({n.fecha.isoformat()}): {n.resumen}" for n in notas]
+    if notas:
+        idx += ["## Noticias"] + [f"- [{n.titulo}]({url_sitio}{n.url}) ({n.fecha.isoformat()}): {n.resumen}" for n in notas]
     idx += ["", "## Opcional", f"- [Texto completo]({url_sitio}/llms-full.txt)"]
     escribir("/llms.txt", "\n".join(idx) + "\n")
 
     sin_md = lambda h: re.sub(r"\n{3,}", "\n\n", re.sub(r"<[^>]+>", "", h)).strip()
-    full = cab + ["## Biografía", "", str(p.biografia or ""), "", "## Cargos"]
-    for c in t.cargos:
+    full = list(cab)
+    if indexar_todo:
+        full += ["## Biografía", "", str(p.biografia or ""), "", "## Cargos"]
+    for c in (t.cargos if indexar_todo else []):
         periodo = " ".join(x for x in [c.inicio, "a la fecha" if c.actual else (f"a {c.fin}" if c.fin else "")] if x)
         full.append(f"- {c.cargo}, {c.institucion}" + (f" ({periodo})" if periodo else ""))
     if ap_notas:
         full += ["", f"## {apartado.get('nombre') or 'Archivo informativo'}"]
         for x in ap_notas:
             full += ["", f"### {x.titulo}", f"URL: {url_sitio}{x.url}", "", x.texto]
-    full += ["", "## Noticias"]
+    if notas:
+        full += ["", "## Noticias"]
     for n in notas:
         full += ["", f"### {n.titulo}", f"Fecha: {n.fecha.isoformat()} | Tema: {n.categoria} | URL: {url_sitio}{n.url}",
                  f"Fuente: {n.fuente_nombre} {n.fuente_url}".rstrip(), "", sin_md(n.html)]

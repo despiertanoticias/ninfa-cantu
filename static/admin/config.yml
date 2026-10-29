@@ -150,6 +150,7 @@ collections:
           - { label: Título del sitio, name: titulo, widget: string }
           - { label: Descripción para buscadores, name: descripcion, widget: text }
           - { label: Dirección del sitio, name: url, widget: string }
+          - { label: Permitir que buscadores indexen todo el sitio, name: indexar_sitio, widget: boolean, default: false, required: false, hint: "Apagado: solo el apartado informativo se indexa; el resto de páginas lleva noindex." }
           - { label: Orden de los temas, name: categorias, widget: list, hint: "Orden en que aparecen los temas. Los tres primeros se muestran en la portada." }
 
   # ---------------- Apartado informativo (no aparece en el menú) ----------------
