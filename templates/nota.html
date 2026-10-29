@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% set descripcion = nota.resumen %}
+{% set imagen_og = nota.imagen %}
+{% set og_tipo = "article" %}
+{% block contenido %}
+<article class="nota">
+  <header class="nota__cab contenedor">
+    <nav class="migas" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="/noticias/">Noticias</a><span aria-hidden="true">/</span><a href="/noticias/{{ nota.cat_slug }}/">{{ nota.categoria }}</a></nav>
+    <h1 class="nota__titulo">{{ nota.titulo }}</h1>
+    {% if nota.resumen %}<p class="nota__resumen">{{ nota.resumen }}</p>{% endif %}
+    <p class="nota__firma"><span>Por <strong>{{ nota.autor or "Redacción" }}</strong></span><time datetime="{{ nota.fecha | iso }}">{{ nota.fecha | fecha }}</time><span>Lectura de {{ nota.lectura }} min</span></p>
+  </header>
+
+  <figure class="nota__img contenedor">
+    <img src="{{ nota.imagen }}" alt="{{ nota.pie_imagen }}" width="1200" height="750">
+    {% if nota.pie_imagen %}<figcaption>{{ nota.pie_imagen }}</figcaption>{% endif %}
+  </figure>
+
+  <div class="contenedor nota__cuerpo">
+    <div class="nota__texto">
+      <div class="prosa">{{ nota.html | safe }}</div>
+
+      {% if nota.fuente_url %}
+      <aside class="fuente">
+        <p>Información publicada originalmente por <a href="{{ nota.fuente_url }}" target="_blank" rel="noopener">{{ nota.fuente_nombre or "la fuente" }}</a>.</p>
+      </aside>
+      {% endif %}
+
+      <div class="compartir">
+        <p>Compartir</p>
+        {% set u = sitio.url ~ nota.url %}
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ u | urlencode }}" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://x.com/intent/post?url={{ u | urlencode }}&text={{ nota.titulo | urlencode }}" target="_blank" rel="noopener">X</a>
+        <a href="https://wa.me/?text={{ (nota.titulo ~ ' ' ~ u) | urlencode }}" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ u | urlencode }}" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <nav class="vecinas" aria-label="Otras notas">
+        {% if anterior %}<a class="vecina" href="{{ anterior.url }}"><span>Nota anterior</span>{{ anterior.titulo }}</a>{% else %}<span></span>{% endif %}
+        {% if siguiente %}<a class="vecina vecina--sig" href="{{ siguiente.url }}"><span>Nota siguiente</span>{{ siguiente.titulo }}</a>{% endif %}
+      </nav>
+    </div>
+
+    <aside class="lateral" aria-label="Más información">
+      <div class="lateral__perfil">
+        <img src="{{ perfil.foto }}" alt="" width="447" height="447" loading="lazy">
+        <div>
+          <p class="lateral__nombre">{{ perfil.nombre }}</p>
+          <p class="lateral__cargo">{{ perfil.cargo_actual }}</p>
+          <a href="/biografia/">Biografía</a>
+        </div>
+      </div>
+      <section class="lateral__bloque">
+        <h2>Lo más reciente</h2>
+        <ul class="lateral__lista">
+          {% for n in recientes if n.url != nota.url %}{% if loop.index <= 5 %}
+          <li><a href="{{ n.url }}">{{ n.titulo }}</a><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time></li>
+          {% endif %}{% endfor %}
+        </ul>
+      </section>
+      <section class="lateral__bloque">
+        <h2>Temas</h2>
+        <div class="etiquetas">
+          {% for c in categorias %}<a href="/noticias/{{ c.slug }}/">{{ c.nombre }}</a>{% endfor %}
+        </div>
+      </section>
+    </aside>
+  </div>
+</article>
+
+{% if relacionadas %}
+<section class="bloque bloque--gris" aria-labelledby="t-rel">
+  <div class="contenedor">
+    <div class="bloque__cab"><h2 id="t-rel" class="titulo-seccion">Sigue leyendo</h2><a class="enlace-mas" href="/noticias/{{ nota.cat_slug }}/">Más de {{ nota.categoria }}</a></div>
+    <div class="rejilla">{% for n in relacionadas %}{% include "parciales/tarjeta.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,42 +1,38 @@
 # ninfacantu.com
 
-Sitio oficial de Ninfa Cantú de Andar. Hecho con [Eleventy](https://www.11ty.dev/) y editable desde **/admin** con [Decap CMS](https://decapcms.org/).
+Sitio oficial de Ninfa Cantú Deándar, secretaria de Economía de Tamaulipas. Se compila con Python (`build.py`) y se edita desde **/admin** con [Decap CMS](https://decapcms.org/).
+
+## Publicar
+
+**Opción A: arrastrar el .zip (rápido).** Ejecuta `python3 build.py --zip` y arrastra `ninfacantu-sitio.zip` a https://app.netlify.com/drop o, en un sitio existente, a *Deploys › Deploy manually*. Con esta opción el sitio se ve completo, pero **/admin no puede guardar cambios** porque no hay repositorio conectado.
+
+**Opción B: conectar este repositorio (recomendada para usar /admin).**
+1. En Netlify: *Add new project › Import an existing project › GitHub* › `despiertanoticias/ninfa-cantu`. La compilación ya está configurada en `netlify.toml`. Si ya subiste el .zip, puedes conectar el repositorio a ese mismo sitio en *Project configuration › Build & deploy › Link repository*.
+2. *Domain management* › agrega `ninfacantu.com`.
+3. *Identity* › **Enable Identity** › registro **Invite only** › *Services* › **Enable Git Gateway**.
+4. *Identity › Invite users* con tu correo, acepta la invitación y entra a https://ninfacantu.com/admin/.
+
+Cada cambio guardado en /admin se publica solo en uno o dos minutos.
 
 ## Qué se edita desde /admin
 
-| Sección del panel | Qué cambia en el sitio | Archivo |
+| Panel | Qué cambia | Archivo |
 |---|---|---|
-| Noticias | Notas, agenda, comunicados y opinión | `src/noticias/*.md` |
-| Información de Ninfa › Perfil y biografía | Cargo actual, lema, foto, biografía, datos destacados, correo y redes | `src/_data/perfil.json` |
-| Información de Ninfa › Trayectoria y cargos | Línea de tiempo de cargos | `src/_data/trayectoria.json` |
-| Información de Ninfa › Ajustes del sitio | Título y descripción para buscadores | `src/_data/sitio.json` |
-
-Cada cambio guardado en el panel se convierte en un commit en `main`, y Netlify vuelve a publicar el sitio en uno o dos minutos.
-
-## Puesta en marcha en Netlify (una sola vez)
-
-1. **Conectar el repositorio:** en Netlify, *Add new project › Import an existing project › GitHub* y elige `despiertanoticias/ninfa-cantu`. La configuración de compilación ya está en `netlify.toml` (comando `npm run build`, carpeta `_site`).
-2. **Dominio:** *Domain management › Add a domain* › `ninfacantu.com`. Apunta el DNS como indique Netlify y espera a que se active HTTPS.
-3. **Activar Identity:** *Project configuration › Identity › Enable Identity*.
-   - *Registration preferences* › **Invite only** (para que nadie más pueda registrarse).
-   - *Services › Git Gateway* › **Enable Git Gateway**.
-4. **Invitar editores:** *Identity › Invite users* con el correo de quien va a editar. Al abrir el correo de invitación se crea la contraseña.
-5. Entra a **https://ninfacantu.com/admin/** e inicia sesión.
+| Noticias | Notas, portada, categoría, fuente | `content/noticias/*.md` |
+| Información de Ninfa › Perfil y biografía | Cargo, lema, foto, biografía, cifras, mensaje, correo y redes | `content/datos/perfil.json` |
+| Información de Ninfa › Trayectoria y cargos | Línea de tiempo | `content/datos/trayectoria.json` |
+| Información de Ninfa › Ejes de trabajo y proyectos | Ejes e íconos, proyectos estratégicos | `content/datos/ejes.json` |
+| Información de Ninfa › Ajustes del sitio | Título, descripción y orden de temas | `content/datos/sitio.json` |
 
 ## Trabajar en local
 
 ```bash
-npm install
-npm start   # http://localhost:8080
+pip install -r requirements.txt
+python3 build.py            # genera _site/
+python3 -m http.server -d _site 8000
 ```
 
-## Estructura
+## Herramientas
 
-```
-src/
-  _data/        perfil, trayectoria y ajustes (JSON editables)
-  _includes/    plantilla base, nota y componentes
-  noticias/     una nota por archivo .md
-  admin/        panel Decap CMS (config.yml)
-  assets/       estilos, logo, foto e imágenes subidas
-```
+- `herramientas/notas_iniciales.py`: las 30 notas iniciales, redactadas a partir de notas de prensa (cada una enlaza a su fuente).
+- `herramientas/portadas.py`: genera las portadas con cifra clave (requiere Playwright).

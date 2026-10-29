@@ -1,0 +1,47 @@
+{
+  "ejes": [
+    {
+      "icono": "fabrica",
+      "titulo": "Atracción de inversión",
+      "texto": "Promoción del estado ante empresas nacionales y extranjeras en los sectores automotriz, eléctrico-electrónico, energía, semiconductores, médico y aeroespacial."
+    },
+    {
+      "icono": "monedas",
+      "titulo": "Financiamiento a MiPyMEs",
+      "texto": "Créditos productivos de Fondo Tamaulipas y del programa Crédito Impulso, en alianza con Nafin, para conservar y crear empleo."
+    },
+    {
+      "icono": "sello",
+      "titulo": "Hecho en Tamaulipas",
+      "texto": "Distintivo y vinculación comercial para que productores locales lleguen a nuevos mercados y cadenas de tiendas."
+    },
+    {
+      "icono": "barco",
+      "titulo": "Comercio exterior y logística",
+      "texto": "Puertos, puentes internacionales y aduanas como Nuevo Laredo, la más importante de América Latina."
+    },
+    {
+      "icono": "globo",
+      "titulo": "Vinculación internacional",
+      "texto": "Misiones y acuerdos con la Unión Europea, España, Estados Unidos, Canadá, Brasil, Colombia y Asia."
+    }
+  ],
+  "proyectos": [
+    {
+      "nombre": "Puerto Norte de Matamoros",
+      "texto": "Nueva puerta marítima del noreste, a 80 km de la frontera con Estados Unidos."
+    },
+    {
+      "nombre": "Puerto del Interior, Victoria",
+      "texto": "Polo industrial y logístico en el centro del estado."
+    },
+    {
+      "nombre": "Polo de Desarrollo en Altamira",
+      "texto": "Designado Polo de Desarrollo Económico para el Bienestar dentro del Plan México."
+    },
+    {
+      "nombre": "Puentes internacionales",
+      "texto": "Modernización de cruces fronterizos para el comercio exterior."
+    }
+  ]
+}

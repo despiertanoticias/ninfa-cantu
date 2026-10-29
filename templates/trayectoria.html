@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% set descripcion = "Cargos y responsabilidades de " ~ perfil.nombre ~ "." %}
+{% block contenido %}
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>Trayectoria</h1>
+    <p>Cargos y responsabilidades, del más reciente al primero.</p>
+  </div>
+</header>
+
+<section class="bloque">
+  <div class="contenedor tray">
+    <ol class="linea-tiempo linea-tiempo--completa">
+      {% for c in trayectoria.cargos %}
+      <li class="hito{% if c.actual %} hito--actual{% endif %}">
+        {% if c.inicio %}<p class="hito__periodo">{{ c.inicio }}{% if c.actual %} a la fecha{% elif c.fin %} a {{ c.fin }}{% endif %}</p>{% endif %}
+        <h2 class="hito__cargo">{{ c.cargo }}</h2>
+        <p class="hito__inst">{{ c.institucion }}</p>
+        {% if c.descripcion %}<div class="hito__desc">{{ c.descripcion | md }}</div>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+    <aside class="tray__lateral">
+      <h2>Momentos clave</h2>
+      <ul>
+        {% for n in notas if n.categoria == "Gestión" %}
+        <li><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha }}</time><a href="{{ n.url }}">{{ n.titulo }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+  </div>
+</section>
+
+{% if ejes.ejes %}
+<section class="bloque bloque--gris ejes">
+  <div class="contenedor">
+    <div class="ejes__cab"><h2 class="titulo-seccion">Ejes de trabajo</h2><p>Las prioridades de su gestión en la Secretaría de Economía.</p></div>
+    <ul class="ejes__lista">
+      {% for e in ejes.ejes %}<li class="eje">{{ icono(e.icono, "eje__icono") }}<h3>{{ e.titulo }}</h3><p>{{ e.texto }}</p></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

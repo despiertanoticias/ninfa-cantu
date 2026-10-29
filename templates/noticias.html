@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block contenido %}
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>{{ cat_actual.nombre if cat_actual else "Noticias" }}</h1>
+    <p>{% if cat_actual %}{{ cat_actual.total }} notas sobre {{ cat_actual.nombre | lower }}.{% else %}Inversiones, economía, agenda internacional y apoyo a las MiPyMEs de Tamaulipas.{% endif %}</p>
+  </div>
+</header>
+
+<nav class="filtros" aria-label="Temas">
+  <div class="contenedor filtros__in">
+    <a href="/noticias/"{% if not cat_actual %} aria-current="page"{% endif %}>Todas <span>{{ notas | length }}</span></a>
+    {% for c in categorias %}
+    <a href="/noticias/{{ c.slug }}/"{% if cat_actual and cat_actual.slug == c.slug %} aria-current="page"{% endif %}>{{ c.nombre }} <span>{{ c.total }}</span></a>
+    {% endfor %}
+  </div>
+</nav>
+
+<section class="bloque bloque--corto">
+  <div class="contenedor">
+    {% if lista %}
+    <div class="rejilla">
+      {% set con_resumen = true %}
+      {% for n in lista %}{% include "parciales/tarjeta.html" %}{% endfor %}
+    </div>
+    {% if paginacion.total > 1 %}
+    <nav class="paginacion" aria-label="Páginas">
+      {% if paginacion.anterior %}<a href="{{ paginacion.anterior }}">Más recientes</a>{% else %}<span></span>{% endif %}
+      <span>Página {{ paginacion.actual }} de {{ paginacion.total }}</span>
+      {% if paginacion.siguiente %}<a href="{{ paginacion.siguiente }}">Anteriores</a>{% else %}<span></span>{% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <p class="vacio">Todavía no hay noticias publicadas.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% set t = (titulo ~ " | " ~ perfil.nombre) if titulo else (perfil.nombre ~ " | " ~ perfil.cargo_actual) %}
+  {% set d = descripcion or sitio.descripcion %}
+  {% set img = imagen_og or "/assets/img/og.jpg" %}
+  <title>{{ t }}</title>
+  <meta name="description" content="{{ d }}">
+  <link rel="canonical" href="{{ sitio.url }}{{ url }}">
+  <meta property="og:type" content="{{ og_tipo or 'website' }}">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:site_name" content="{{ perfil.nombre }}">
+  <meta property="og:title" content="{{ titulo or perfil.nombre }}">
+  <meta property="og:description" content="{{ d }}">
+  <meta property="og:image" content="{{ sitio.url }}{{ img }}">
+  <meta property="og:url" content="{{ sitio.url }}{{ url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#5E0B1E">
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="alternate" type="application/rss+xml" title="Noticias de {{ perfil.nombre }}" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/estilos.css">
+  {% block cabeza %}{% endblock %}
+</head>
+<body class="{% block clase %}{% endblock %}">
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+
+  <div class="barra-sup">
+    <div class="barra-sup__in">
+      <p class="barra-sup__fecha" id="hoy">Tamaulipas, México</p>
+      <p class="barra-sup__cargo">{{ perfil.cargo_actual }}</p>
+      {% include "parciales/redes.html" %}
+    </div>
+  </div>
+
+  <header class="cabecera">
+    <div class="cabecera__in">
+      <a class="cabecera__logo" href="/" aria-label="Inicio, {{ perfil.nombre }}">
+        <img src="/assets/img/logo-ninfa-cantu-sm.png" alt="Ninfa Cantú" width="666" height="131">
+      </a>
+      <button class="menu-btn" aria-expanded="false" aria-controls="menu" type="button">
+        <span class="menu-btn__barras" aria-hidden="true"></span>
+        <span>Menú</span>
+      </button>
+      <nav id="menu" class="menu" aria-label="Principal">
+        <ul>
+        {% for ruta, nombre in [("/", "Inicio"), ("/biografia/", "Biografía"), ("/trayectoria/", "Trayectoria"), ("/noticias/", "Noticias"), ("/contacto/", "Contacto")] %}
+          <li><a href="{{ ruta }}"{% if url == ruta or (ruta != "/" and url.startswith(ruta)) %} aria-current="page"{% endif %}>{{ nombre }}</a></li>
+        {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie">
+    <div class="pie__in">
+      <div class="pie__marca">
+        <img src="/assets/img/logo-ninfa-cantu-sm.png" alt="Ninfa Cantú" width="666" height="131" loading="lazy">
+        <p>{{ perfil.lema }}</p>
+        {% include "parciales/redes.html" %}
+      </div>
+      <nav class="pie__col" aria-label="Secciones">
+        <h2>Secciones</h2>
+        <a href="/biografia/">Biografía</a>
+        <a href="/trayectoria/">Trayectoria</a>
+        <a href="/noticias/">Noticias</a>
+        <a href="/contacto/">Contacto</a>
+      </nav>
+      <nav class="pie__col" aria-label="Temas">
+        <h2>Temas</h2>
+        {% for c in categorias %}<a href="/noticias/{{ c.slug }}/">{{ c.nombre }}</a>{% endfor %}
+      </nav>
+      <div class="pie__col">
+        <h2>Contacto</h2>
+        {% if perfil.correo %}<a href="mailto:{{ perfil.correo }}">{{ perfil.correo }}</a>{% endif %}
+        {% if perfil.telefono %}<a href="tel:{{ perfil.telefono | replace(' ', '') }}">{{ perfil.telefono }}</a>{% endif %}
+        <a href="/feed.xml">Noticias por RSS</a>
+      </div>
+    </div>
+    <div class="pie__legal">
+      <p>© {{ anio }} {{ perfil.nombre }}. Todos los derechos reservados.</p>
+      <p>Las notas resumen información publicada por medios; cada una enlaza a su fuente original.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var b = document.querySelector('.menu-btn'), m = document.getElementById('menu');
+      if (b) b.addEventListener('click', function () {
+        var abierto = b.getAttribute('aria-expanded') === 'true';
+        b.setAttribute('aria-expanded', String(!abierto));
+        m.classList.toggle('menu--abierto', !abierto);
+      });
+      var hoy = document.getElementById('hoy');
+      if (hoy) {
+        try {
+          var t = new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Monterrey' });
+          hoy.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+        } catch (e) {}
+      }
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

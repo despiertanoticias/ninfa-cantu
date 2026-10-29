@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% set descripcion = "Envía un mensaje, invitación o propuesta a " ~ perfil.nombre ~ "." %}
+{% block contenido %}
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>Contacto</h1>
+    <p>Invitaciones a eventos, solicitudes de entrevista y propuestas de inversión.</p>
+  </div>
+</header>
+
+<section class="bloque">
+  <div class="contenedor contacto">
+    <form class="formulario" name="contacto" method="POST" action="/gracias/" data-netlify="true" netlify-honeypot="sitio-web">
+      <input type="hidden" name="form-name" value="contacto">
+      <p class="oculto"><label>No llenar: <input name="sitio-web"></label></p>
+      <div class="campo"><label for="f-nombre">Nombre completo</label><input id="f-nombre" name="nombre" autocomplete="name" required></div>
+      <div class="campo-doble">
+        <div class="campo"><label for="f-correo">Correo electrónico</label><input id="f-correo" type="email" name="correo" autocomplete="email" required></div>
+        <div class="campo"><label for="f-tel">Teléfono <span>(opcional)</span></label><input id="f-tel" type="tel" name="telefono" autocomplete="tel"></div>
+      </div>
+      <div class="campo-doble">
+        <div class="campo"><label for="f-org">Empresa u organización <span>(opcional)</span></label><input id="f-org" name="organizacion" autocomplete="organization"></div>
+        <div class="campo"><label for="f-motivo">Motivo</label>
+          <select id="f-motivo" name="motivo">
+            <option>Mensaje general</option>
+            <option>Invitación a un evento</option>
+            <option>Solicitud de entrevista</option>
+            <option>Proyecto de inversión</option>
+            <option>Apoyo a MiPyMEs</option>
+          </select>
+        </div>
+      </div>
+      <div class="campo"><label for="f-msj">Mensaje</label><textarea id="f-msj" name="mensaje" rows="6" required></textarea></div>
+      <button class="btn btn--guinda" type="submit">Enviar mensaje</button>
+    </form>
+    <aside class="contacto__datos">
+      {% if perfil.correo %}<div><h2>Correo</h2><a href="mailto:{{ perfil.correo }}">{{ perfil.correo }}</a></div>{% endif %}
+      {% if perfil.telefono %}<div><h2>Teléfono</h2><a href="tel:{{ perfil.telefono | replace(' ', '') }}">{{ perfil.telefono }}</a></div>{% endif %}
+      <div><h2>Oficina</h2><p>Secretaría de Economía del Gobierno de Tamaulipas, Ciudad Victoria.</p></div>
+      {% set r = perfil.redes or {} %}
+      {% if r.facebook or r.instagram or r.x or r.youtube or r.tiktok %}<div><h2>Redes sociales</h2>{% include "parciales/redes.html" %}</div>{% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

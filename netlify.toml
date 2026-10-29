@@ -1,23 +1,8 @@
+# Netlify compila el sitio con Python (build.py) cada vez que cambia el repositorio,
+# incluidas las ediciones hechas desde /admin.
 [build]
-  command = "npm run build"
+  command = "pip install -r requirements.txt && python3 build.py"
   publish = "_site"
 
 [build.environment]
-  NODE_VERSION = "22"
-
-# El panel /admin no debe aparecer en buscadores
-[[headers]]
-  for = "/admin/*"
-  [headers.values]
-    X-Robots-Tag = "noindex"
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=604800"
-
-[[redirects]]
-  from = "https://www.ninfacantu.com/*"
-  to = "https://ninfacantu.com/:splat"
-  status = 301
-  force = true
+  PYTHON_VERSION = "3.12"

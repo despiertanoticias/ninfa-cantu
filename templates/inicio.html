@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block clase %}pag-inicio{% endblock %}
+{% block contenido %}
+
+{% if ticker %}
+<section class="ticker" aria-label="Últimas noticias">
+  <div class="ticker__in">
+    <p class="ticker__etq">Lo último</p>
+    <div class="ticker__ventana">
+      <ul class="ticker__lista">
+        {% for n in ticker %}<li><a href="{{ n.url }}"><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time>{{ n.titulo }}</a></li>{% endfor %}
+        {% for n in ticker %}<li aria-hidden="true"><a href="{{ n.url }}" tabindex="-1"><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time>{{ n.titulo }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="portada">
+  <div class="portada__in">
+    <div class="portada__texto">
+      {% set partes = perfil.nombre.split(" ") %}
+      <h1 class="nombre">
+        <span class="nombre__pila">{{ partes[0] }}</span>
+        <span class="nombre__apellido">{{ partes[1] if partes | length > 1 else "" }}</span>
+        {% if partes | length > 2 %}<span class="nombre__de">{{ partes[2:] | join(" ") }}</span>{% endif %}
+      </h1>
+      <p class="portada__cargo">{{ perfil.cargo_actual }}</p>
+      <p class="portada__lema">{{ perfil.lema }}</p>
+      <p class="portada__bio">{{ perfil.bio_corta }}</p>
+      <div class="botones">
+        <a class="btn btn--guinda" href="/noticias/">Leer noticias</a>
+        <a class="btn btn--linea" href="/biografia/">Conocer su biografía</a>
+      </div>
+    </div>
+    <figure class="portada__foto">
+      <div class="marco">
+        <img src="{{ perfil.foto }}" alt="Retrato de {{ perfil.nombre }}" width="447" height="447" fetchpriority="high">
+      </div>
+      <figcaption class="portada__insignia">
+        <strong>Desde 2022</strong>
+        <span>al frente de la economía de Tamaulipas</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+{% if perfil.logros %}
+<section class="cifras" aria-labelledby="t-cifras">
+  <div class="contenedor">
+    <h2 id="t-cifras" class="cifras__titulo">Resultados de la economía tamaulipeca</h2>
+    <div class="cifras__in">
+      {% for l in perfil.logros %}
+      <div class="cifra">
+        <p class="cifra__num">{{ l.cifra }}</p>
+        <p class="cifra__txt">{{ l.texto }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if principal %}
+<section class="bloque recientes" aria-labelledby="t-recientes">
+  <div class="contenedor">
+    <div class="bloque__cab">
+      <h2 id="t-recientes" class="titulo-seccion">Lo más reciente</h2>
+      <a class="enlace-mas" href="/noticias/">Ver las {{ notas | length }} noticias</a>
+    </div>
+    <div class="recientes__rejilla">
+      <article class="principal">
+        <a class="principal__img" href="{{ principal.url }}" tabindex="-1" aria-hidden="true">
+          <img src="{{ principal.imagen }}" alt="" width="1200" height="750">
+        </a>
+        <p class="meta"><a class="meta__cat" href="/noticias/{{ principal.cat_slug }}/">{{ principal.categoria }}</a><time datetime="{{ principal.fecha | iso }}">{{ principal.fecha | fecha }}</time></p>
+        <h3 class="principal__titulo"><a href="{{ principal.url }}">{{ principal.titulo }}</a></h3>
+        <p class="principal__resumen">{{ principal.resumen }}</p>
+      </article>
+      <div class="secundarias">
+        {% for n in secundarias %}
+        <article class="fila">
+          <a class="fila__img" href="{{ n.url }}" tabindex="-1" aria-hidden="true"><img src="{{ n.imagen }}" alt="" loading="lazy" width="1200" height="750"></a>
+          <div>
+            <p class="meta"><a class="meta__cat" href="/noticias/{{ n.cat_slug }}/">{{ n.categoria }}</a><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time></p>
+            <h3 class="fila__titulo"><a href="{{ n.url }}">{{ n.titulo }}</a></h3>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if mas %}
+<section class="bloque bloque--gris" aria-labelledby="t-mas">
+  <div class="contenedor">
+    <div class="bloque__cab">
+      <h2 id="t-mas" class="titulo-seccion">Más noticias</h2>
+      <a class="enlace-mas" href="/noticias/">Archivo completo</a>
+    </div>
+    <div class="rejilla">
+      {% for n in mas %}{% include "parciales/tarjeta.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ejes.ejes %}
+<section class="bloque ejes" aria-labelledby="t-ejes">
+  <div class="contenedor">
+    <div class="ejes__cab">
+      <h2 id="t-ejes" class="titulo-seccion">Ejes de trabajo</h2>
+      <p>Las prioridades de la Secretaría de Economía para generar inversión, empleo y bienestar en Tamaulipas.</p>
+    </div>
+    <ul class="ejes__lista">
+      {% for e in ejes.ejes %}
+      <li class="eje">
+        {{ icono(e.icono, "eje__icono") }}
+        <h3>{{ e.titulo }}</h3>
+        <p>{{ e.texto }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% if perfil.mensaje %}
+<section class="mensaje" aria-label="Mensaje">
+  <div class="contenedor mensaje__in">
+    <img class="mensaje__foto" src="{{ perfil.foto }}" alt="" width="447" height="447" loading="lazy">
+    <div>
+      <p class="mensaje__txt">{{ perfil.mensaje }}</p>
+      <p class="mensaje__firma"><strong>{{ perfil.nombre }}</strong>{% if perfil.mensaje_fuente %}<span>{{ perfil.mensaje_fuente }}</span>{% endif %}</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="bloque" aria-labelledby="t-temas">
+  <div class="contenedor">
+    <div class="bloque__cab">
+      <h2 id="t-temas" class="titulo-seccion">Noticias por tema</h2>
+    </div>
+    <div class="temas">
+      {% for c in categorias[:3] %}
+      {% set lista = porcat[c.nombre] %}
+      <section class="tema" aria-labelledby="t-tema-{{ c.slug }}">
+        <h3 id="t-tema-{{ c.slug }}" class="tema__titulo"><a href="/noticias/{{ c.slug }}/">{{ c.nombre }}</a><span>{{ c.total }}</span></h3>
+        {% set n = lista[0] %}
+        <a class="tema__img" href="{{ n.url }}" tabindex="-1" aria-hidden="true"><img src="{{ n.imagen }}" alt="" loading="lazy" width="1200" height="750"></a>
+        <h4 class="tema__principal"><a href="{{ n.url }}">{{ n.titulo }}</a></h4>
+        <ul class="tema__lista">
+          {% for n in lista[1:4] %}<li><a href="{{ n.url }}">{{ n.titulo }}</a><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time></li>{% endfor %}
+        </ul>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if ejes.proyectos %}
+<section class="proyectos" aria-labelledby="t-proy">
+  <div class="contenedor">
+    <h2 id="t-proy" class="proyectos__titulo">Proyectos estratégicos</h2>
+    <ul class="proyectos__lista">
+      {% for p in ejes.proyectos %}
+      <li><h3>{{ p.nombre }}</h3><p>{{ p.texto }}</p></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+<section class="bloque" aria-labelledby="t-tray">
+  <div class="contenedor tray-inicio">
+    <div class="tray-inicio__intro">
+      <h2 id="t-tray" class="titulo-seccion">Trayectoria</h2>
+      <p>De Nuevo Laredo a la Secretaría de Economía de Tamaulipas: los cargos y responsabilidades de su carrera.</p>
+      <a class="btn btn--linea" href="/trayectoria/">Ver trayectoria completa</a>
+    </div>
+    <ol class="linea-tiempo">
+      {% for c in trayectoria.cargos[:4] %}
+      <li class="hito{% if c.actual %} hito--actual{% endif %}">
+        {% if c.inicio %}<p class="hito__periodo">{{ c.inicio }}{% if c.actual %} a la fecha{% elif c.fin %} a {{ c.fin }}{% endif %}</p>{% endif %}
+        <h3 class="hito__cargo">{{ c.cargo }}</h3>
+        <p class="hito__inst">{{ c.institucion }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="contacto-cta">
+  <div class="contenedor contacto-cta__in">
+    <h2>¿Quieres invitarla a un evento o presentar un proyecto de inversión?</h2>
+    <a class="btn btn--dorado" href="/contacto/">Escribir un mensaje</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on("init", function (u) {
+      if (!u) netlifyIdentity.on("login", function () { document.location.href = "/admin/"; });
+    });
+  }
+</script>
+{% endblock %}

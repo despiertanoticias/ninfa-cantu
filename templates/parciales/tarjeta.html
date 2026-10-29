@@ -1,0 +1,8 @@
+<article class="tarjeta">
+  <a class="tarjeta__img" href="{{ n.url }}" tabindex="-1" aria-hidden="true">
+    <img src="{{ n.imagen }}" alt="" loading="lazy" width="1200" height="750">
+  </a>
+  <p class="meta"><a class="meta__cat" href="/noticias/{{ n.cat_slug }}/">{{ n.categoria }}</a><time datetime="{{ n.fecha | iso }}">{{ n.fecha | fecha_corta }}</time></p>
+  <h3 class="tarjeta__titulo"><a href="{{ n.url }}">{{ n.titulo }}</a></h3>
+  {% if con_resumen %}<p class="tarjeta__resumen">{{ n.resumen }}</p>{% endif %}
+</article>

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% set descripcion = perfil.bio_corta %}
+{% block contenido %}
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>Biografía</h1>
+    <p>{{ perfil.cargo_actual }}</p>
+  </div>
+</header>
+
+<section class="bloque">
+  <div class="contenedor bio">
+    <aside class="bio__lateral">
+      <div class="marco marco--chico">
+        <img src="{{ perfil.foto }}" alt="Retrato de {{ perfil.nombre }}" width="447" height="447">
+      </div>
+      <p class="bio__nombre">{{ perfil.nombre }}</p>
+      <p class="bio__cargo">{{ perfil.cargo_actual }}</p>
+      {% include "parciales/redes.html" %}
+      <dl class="ficha">
+        {% set actual = trayectoria.cargos[0] if trayectoria.cargos else None %}
+        <div><dt>Origen</dt><dd>Nuevo Laredo, Tamaulipas</dd></div>
+        <div><dt>Formación</dt><dd>Licenciada en Ciencias de la Comunicación</dd></div>
+        {% if actual %}<div><dt>Cargo actual</dt><dd>{{ actual.cargo }}, desde {{ actual.inicio }}</dd></div>{% endif %}
+      </dl>
+    </aside>
+    <div class="prosa bio__texto">
+      <p class="entrada">{{ perfil.bio_corta }}</p>
+      {{ perfil.biografia | md }}
+    </div>
+  </div>
+</section>
+
+{% if perfil.logros %}
+<section class="cifras">
+  <div class="contenedor">
+    <h2 class="cifras__titulo">Resultados de la economía tamaulipeca</h2>
+    <div class="cifras__in">
+      {% for l in perfil.logros %}<div class="cifra"><p class="cifra__num">{{ l.cifra }}</p><p class="cifra__txt">{{ l.texto }}</p></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="bloque bloque--gris">
+  <div class="contenedor">
+    <div class="bloque__cab"><h2 class="titulo-seccion">Noticias recientes</h2><a class="enlace-mas" href="/noticias/">Todas las noticias</a></div>
+    <div class="rejilla">{% for n in notas[:3] %}{% include "parciales/tarjeta.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endblock %}
