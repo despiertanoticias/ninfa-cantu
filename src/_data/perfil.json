@@ -1,0 +1,22 @@
+{
+  "nombre": "Ninfa Cantú de Andar",
+  "cargo_actual": "Escribe aquí su cargo actual",
+  "lema": "Trabajo cercano, resultados que se ven.",
+  "foto": "/assets/img/ninfa-cantu.jpg",
+  "bio_corta": "Este es un texto breve de presentación. Cámbialo desde el panel de administración en Perfil > Presentación breve: dos o tres líneas sobre quién es y a qué se dedica.",
+  "biografia": "Aquí va la biografía completa. Puedes escribir varios párrafos, agregar **negritas**, listas y enlaces desde el panel de administración.\n\nUn buen orden es: origen y formación, trayectoria profesional, causas que impulsa y lo que la mueve hoy.",
+  "logros": [
+    { "cifra": "00", "texto": "Logro o dato destacado. Edítalo en Perfil > Datos destacados." },
+    { "cifra": "00", "texto": "Otro dato que resuma su trabajo, por ejemplo programas impulsados." },
+    { "cifra": "00", "texto": "Un tercer dato: años de servicio, personas beneficiadas, etc." }
+  ],
+  "correo": "contacto@ninfacantu.com",
+  "telefono": "",
+  "redes": {
+    "facebook": "",
+    "instagram": "",
+    "x": "",
+    "youtube": "",
+    "tiktok": ""
+  }
+}

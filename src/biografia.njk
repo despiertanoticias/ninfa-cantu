@@ -1,0 +1,27 @@
+---
+layout: base.njk
+title: Biografía
+permalink: /biografia/
+---
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>Biografía</h1>
+  </div>
+</header>
+
+<section class="bloque">
+  <div class="contenedor bio">
+    <aside class="bio__lateral">
+      <div class="marco marco--chico">
+        <img src="{{ perfil.foto }}" alt="Retrato de {{ perfil.nombre }}" width="447" height="447">
+      </div>
+      <p class="bio__nombre">{{ perfil.nombre }}</p>
+      <p class="bio__cargo">{{ perfil.cargo_actual }}</p>
+      {% include "redes.njk" %}
+    </aside>
+    <div class="prosa bio__texto">
+      <p class="entrada">{{ perfil.bio_corta }}</p>
+      {{ perfil.biografia | md | safe }}
+    </div>
+  </div>
+</section>

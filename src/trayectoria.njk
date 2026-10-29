@@ -1,0 +1,27 @@
+---
+layout: base.njk
+title: Trayectoria
+descripcion: Cargos y responsabilidades de Ninfa Cantú de Andar.
+permalink: /trayectoria/
+---
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>Trayectoria</h1>
+    <p>Cargos y responsabilidades a lo largo de su carrera, del más reciente al primero.</p>
+  </div>
+</header>
+
+<section class="bloque">
+  <div class="contenedor contenedor--angosto">
+    <ol class="linea-tiempo linea-tiempo--completa">
+      {% for c in trayectoria.cargos %}
+      <li class="hito {% if c.actual %}hito--actual{% endif %}">
+        <p class="hito__periodo">{{ c.inicio }}{% if c.actual %} a la fecha{% elif c.fin %} a {{ c.fin }}{% endif %}</p>
+        <h2 class="hito__cargo">{{ c.cargo }}</h2>
+        <p class="hito__inst">{{ c.institucion }}</p>
+        {% if c.descripcion %}<div class="hito__desc">{{ c.descripcion | md | safe }}</div>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>

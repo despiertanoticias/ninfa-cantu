@@ -1,0 +1,28 @@
+{
+  "cargos": [
+    {
+      "cargo": "Cargo actual (ejemplo)",
+      "institucion": "Institución o dependencia",
+      "inicio": "2024",
+      "fin": "",
+      "actual": true,
+      "descripcion": "Describe en una o dos líneas las responsabilidades y resultados en este cargo."
+    },
+    {
+      "cargo": "Cargo anterior (ejemplo)",
+      "institucion": "Institución o dependencia",
+      "inicio": "2021",
+      "fin": "2024",
+      "actual": false,
+      "descripcion": "Principales logros durante este periodo."
+    },
+    {
+      "cargo": "Primer cargo (ejemplo)",
+      "institucion": "Institución u organización",
+      "inicio": "2018",
+      "fin": "2021",
+      "actual": false,
+      "descripcion": "Edita, ordena o elimina estos cargos desde el panel en Trayectoria."
+    }
+  ]
+}

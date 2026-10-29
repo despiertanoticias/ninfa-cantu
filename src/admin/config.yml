@@ -1,0 +1,118 @@
+# Panel de administración (Decap CMS)
+# Inicia sesión en https://ninfacantu.com/admin/
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: "Nueva {{collection}}: {{slug}}"
+    update: "Actualiza {{collection}}: {{slug}}"
+    delete: "Elimina {{collection}}: {{slug}}"
+    uploadMedia: "Sube imagen {{path}}"
+    deleteMedia: "Elimina imagen {{path}}"
+
+locale: es
+site_url: https://ninfacantu.com
+display_url: https://ninfacantu.com
+logo_url: https://ninfacantu.com/assets/img/favicon.png
+
+media_folder: src/assets/uploads
+public_folder: /assets/uploads
+
+collections:
+  # ---------------- Noticias ----------------
+  - name: noticias
+    label: Noticias
+    label_singular: Noticia
+    description: Publica noticias, agenda, comunicados y artículos. La más reciente aparece primero en el sitio.
+    folder: src/noticias
+    create: true
+    extension: md
+    slug: "{{slug}}"
+    sortable_fields: [date, title, categoria]
+    summary: "{{title}} — {{date | date('DD/MM/YYYY')}}"
+    view_filters:
+      - { label: Noticias, field: categoria, pattern: Noticias }
+      - { label: Gestión, field: categoria, pattern: Gestión }
+      - { label: Agenda, field: categoria, pattern: Agenda }
+      - { label: Comunicados, field: categoria, pattern: Comunicados }
+      - { label: Opinión, field: categoria, pattern: Opinión }
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Fecha de publicación, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
+      - label: Categoría
+        name: categoria
+        widget: select
+        default: Noticias
+        options: [Noticias, Gestión, Agenda, Comunicados, Opinión]
+      - { label: Imagen de portada, name: imagen, widget: image, required: false, hint: "Horizontal, de preferencia 1200 × 750 px o más." }
+      - { label: Pie de foto, name: pie_imagen, widget: string, required: false }
+      - { label: Resumen, name: resumen, widget: text, hint: "Una o dos frases. Aparece en la portada y al compartir en redes." }
+      - { label: Destacar en portada, name: destacada, widget: boolean, default: false, required: false, hint: "La nota destacada más reciente ocupa el espacio principal de la página de inicio." }
+      - { label: Autor, name: autor, widget: string, required: false, hint: "Si lo dejas vacío, aparece el nombre de Ninfa Cantú." }
+      - { label: Guardar como borrador (no publicar), name: borrador, widget: boolean, default: false, required: false }
+      - { label: Texto de la nota, name: body, widget: markdown }
+
+  # ---------------- Perfil, trayectoria y ajustes ----------------
+  - name: informacion
+    label: Información de Ninfa
+    description: Perfil, biografía, cargos y datos de contacto que aparecen en todo el sitio.
+    editor: { preview: false }
+    files:
+      - name: perfil
+        label: Perfil y biografía
+        file: src/_data/perfil.json
+        fields:
+          - { label: Nombre completo, name: nombre, widget: string }
+          - { label: Cargo actual, name: cargo_actual, widget: string, hint: "Aparece debajo del nombre en la página de inicio." }
+          - { label: Frase o lema, name: lema, widget: string }
+          - { label: Fotografía principal, name: foto, widget: image, hint: "Vertical o cuadrada, con buena iluminación." }
+          - { label: Presentación breve, name: bio_corta, widget: text, hint: "Dos o tres líneas para la portada." }
+          - { label: Biografía completa, name: biografia, widget: markdown }
+          - label: Datos destacados
+            name: logros
+            widget: list
+            label_singular: dato
+            summary: "{{fields.cifra}} — {{fields.texto}}"
+            hint: "Se muestran en la franja guinda de la portada. Lo ideal son 3."
+            fields:
+              - { label: Cifra o palabra corta, name: cifra, widget: string, hint: "Ej. 25, +10 mil, 3" }
+              - { label: Descripción, name: texto, widget: string }
+          - { label: Correo de contacto, name: correo, widget: string, required: false }
+          - { label: Teléfono, name: telefono, widget: string, required: false }
+          - label: Redes sociales
+            name: redes
+            widget: object
+            hint: "Pega el enlace completo. Deja vacío lo que no uses."
+            fields:
+              - { label: Facebook, name: facebook, widget: string, required: false }
+              - { label: Instagram, name: instagram, widget: string, required: false }
+              - { label: X (Twitter), name: x, widget: string, required: false }
+              - { label: YouTube, name: youtube, widget: string, required: false }
+              - { label: TikTok, name: tiktok, widget: string, required: false }
+
+      - name: trayectoria
+        label: Trayectoria y cargos
+        file: src/_data/trayectoria.json
+        fields:
+          - label: Cargos
+            name: cargos
+            widget: list
+            label_singular: cargo
+            summary: "{{fields.inicio}} — {{fields.cargo}}"
+            hint: "Ordénalos del más reciente al más antiguo; puedes arrastrarlos."
+            fields:
+              - { label: Cargo o puesto, name: cargo, widget: string }
+              - { label: Institución u organización, name: institucion, widget: string }
+              - { label: Año de inicio, name: inicio, widget: string }
+              - { label: Año de término, name: fin, widget: string, required: false }
+              - { label: Es su cargo actual, name: actual, widget: boolean, default: false, required: false }
+              - { label: Descripción y logros, name: descripcion, widget: markdown, required: false, buttons: [bold, italic, link, bulleted-list] }
+
+      - name: sitio
+        label: Ajustes del sitio
+        file: src/_data/sitio.json
+        fields:
+          - { label: Título del sitio, name: titulo, widget: string }
+          - { label: Descripción para buscadores, name: descripcion, widget: text }
+          - { label: Dirección del sitio, name: url, widget: string }
+          - { label: Categorías, name: categorias, widget: list, hint: "Referencia. Para agregar una categoría al selector de noticias, pide el ajuste en el código." }

@@ -1,0 +1,115 @@
+---
+layout: base.njk
+claseBody: pag-inicio
+---
+{% set noticias = collections.noticias %}
+{% set principal = noticias | principal %}
+
+<section class="portada">
+  <div class="portada__in">
+    <div class="portada__texto">
+      <h1 class="nombre">
+        <span class="nombre__pila">Ninfa</span>
+        <span class="nombre__apellido">Cantú <span class="nombre__de">de Andar</span></span>
+      </h1>
+      <p class="portada__cargo">{{ perfil.cargo_actual }}</p>
+      <p class="portada__lema">{{ perfil.lema }}</p>
+      <p class="portada__bio">{{ perfil.bio_corta }}</p>
+      <div class="botones">
+        <a class="btn btn--guinda" href="/trayectoria/">Ver su trayectoria</a>
+        <a class="btn btn--linea" href="/noticias/">Leer noticias</a>
+      </div>
+    </div>
+    <figure class="portada__foto">
+      <div class="marco">
+        <img src="{{ perfil.foto }}" alt="Retrato de {{ perfil.nombre }}" width="447" height="447" fetchpriority="high">
+      </div>
+    </figure>
+  </div>
+</section>
+
+{% if principal %}
+<section class="bloque recientes" aria-labelledby="t-recientes">
+  <div class="contenedor">
+    <div class="bloque__cab">
+      <h2 id="t-recientes" class="titulo-seccion">Lo más reciente</h2>
+      <a class="enlace-mas" href="/noticias/">Todas las noticias</a>
+    </div>
+    <div class="recientes__rejilla">
+      <article class="principal">
+        <a class="principal__img" href="{{ principal.url }}" tabindex="-1" aria-hidden="true">
+          <img src="{{ principal.data.imagen or '/assets/img/og.jpg' }}" alt="" width="1200" height="750">
+        </a>
+        <p class="meta"><span class="meta__cat">{{ principal.data.categoria }}</span> <time datetime="{{ principal.date | iso }}">{{ principal.date | fecha }}</time></p>
+        <h3 class="principal__titulo"><a href="{{ principal.url }}">{{ principal.data.title }}</a></h3>
+        <p class="principal__resumen">{{ principal.data.resumen }}</p>
+      </article>
+      <div class="secundarias">
+        {% for n in noticias | excepto(principal.url, 4) %}
+        <article class="fila">
+          <a class="fila__img" href="{{ n.url }}" tabindex="-1" aria-hidden="true"><img src="{{ n.data.imagen or '/assets/img/og.jpg' }}" alt="" loading="lazy" width="1200" height="750"></a>
+          <div>
+            <p class="meta"><span class="meta__cat">{{ n.data.categoria }}</span> <time datetime="{{ n.date | iso }}">{{ n.date | fechaCorta }}</time></p>
+            <h3 class="fila__titulo"><a href="{{ n.url }}">{{ n.data.title }}</a></h3>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if perfil.logros and perfil.logros | length %}
+<section class="cifras" aria-label="Datos destacados">
+  <div class="contenedor cifras__in">
+    {% for l in perfil.logros %}
+    <div class="cifra">
+      <p class="cifra__num">{{ l.cifra }}</p>
+      <p class="cifra__txt">{{ l.texto }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="bloque" aria-labelledby="t-tray">
+  <div class="contenedor tray-inicio">
+    <div class="tray-inicio__intro">
+      <h2 id="t-tray" class="titulo-seccion">Trayectoria</h2>
+      <p>Los cargos y responsabilidades que ha desempeñado a lo largo de su carrera.</p>
+      <a class="btn btn--linea" href="/trayectoria/">Ver trayectoria completa</a>
+    </div>
+    <ol class="linea-tiempo">
+      {% for c in trayectoria.cargos | limite(3) %}
+      <li class="hito {% if c.actual %}hito--actual{% endif %}">
+        <p class="hito__periodo">{{ c.inicio }}{% if c.actual %} a la fecha{% elif c.fin %} a {{ c.fin }}{% endif %}</p>
+        <h3 class="hito__cargo">{{ c.cargo }}</h3>
+        <p class="hito__inst">{{ c.institucion }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{% set resto = noticias | desde(5) %}
+{% if resto | length %}
+<section class="bloque bloque--gris" aria-labelledby="t-mas">
+  <div class="contenedor">
+    <div class="bloque__cab">
+      <h2 id="t-mas" class="titulo-seccion">Más noticias</h2>
+      <a class="enlace-mas" href="/noticias/">Ver archivo</a>
+    </div>
+    <div class="rejilla">
+      {% for n in resto | limite(3) %}{% include "tarjeta.njk" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="contacto-cta">
+  <div class="contenedor contacto-cta__in">
+    <h2>¿Quieres hacerle llegar un mensaje o una invitación?</h2>
+    <a class="btn btn--dorado" href="/contacto/">Escribir un mensaje</a>
+  </div>
+</section>

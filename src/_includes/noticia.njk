@@ -1,0 +1,37 @@
+---
+layout: base.njk
+---
+<article class="nota">
+  <header class="nota__cab contenedor contenedor--angosto">
+    <p class="meta"><a class="meta__cat" href="/noticias/">{{ categoria }}</a> <time datetime="{{ page.date | iso }}">{{ page.date | fecha }}</time></p>
+    <h1 class="nota__titulo">{{ title }}</h1>
+    {% if resumen %}<p class="nota__resumen">{{ resumen }}</p>{% endif %}
+    <p class="nota__firma">Por {{ autor or perfil.nombre }} <span>Lectura de {{ content | lectura }} min</span></p>
+  </header>
+  {% if imagen %}
+  <figure class="nota__img contenedor">
+    <img src="{{ imagen }}" alt="{{ pie_imagen or '' }}" width="1200" height="750">
+    {% if pie_imagen %}<figcaption>{{ pie_imagen }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+  <div class="prosa contenedor contenedor--angosto">
+    {{ content | safe }}
+  </div>
+  <div class="contenedor contenedor--angosto compartir">
+    <p>Compartir</p>
+    {% set u = sitio.url + page.url %}
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ u | urlencode }}" target="_blank" rel="noopener">Facebook</a>
+    <a href="https://x.com/intent/post?url={{ u | urlencode }}&text={{ title | urlencode }}" target="_blank" rel="noopener">X</a>
+    <a href="https://wa.me/?text={{ (title + ' ' + u) | urlencode }}" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+</article>
+
+{% set otras = collections.noticias | excepto(page.url, 3) %}
+{% if otras | length %}
+<section class="bloque bloque--gris" aria-labelledby="t-otras">
+  <div class="contenedor">
+    <div class="bloque__cab"><h2 id="t-otras" class="titulo-seccion">Sigue leyendo</h2><a class="enlace-mas" href="/noticias/">Todas las noticias</a></div>
+    <div class="rejilla">{% for n in otras %}{% include "tarjeta.njk" %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
