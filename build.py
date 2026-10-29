@@ -127,6 +127,13 @@ def compilar():
     if os.path.isdir(SALIDA):
         shutil.rmtree(SALIDA)
     shutil.copytree(os.path.join(RAIZ, "static"), SALIDA)
+    # El nombre del apartado informativo aparece también en el menú de /admin
+    ap = datos.get("apartado") or {}
+    cfg = os.path.join(SALIDA, "admin", "config.yml")
+    texto = open(cfg, encoding="utf-8").read()
+    nombre_ap = str(ap.get("nombre") or "Apartado informativo").replace('"', "'")
+    texto = texto.replace("__NOMBRE_APARTADO__", nombre_ap).replace("__RUTA_APARTADO__", "/" + slugify(ap.get("ruta") or "archivo") + "/")
+    open(cfg, "w", encoding="utf-8").write(texto)
 
     cats_orden = list(sitio.get("categorias") or [])
     for n in notas:

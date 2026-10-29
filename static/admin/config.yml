@@ -134,15 +134,6 @@ collections:
               - { label: Nombre, name: nombre, widget: string }
               - { label: Descripción breve, name: texto, widget: string }
 
-      - name: apartado
-        label: Nombre y dirección del apartado informativo
-        file: content/datos/apartado.json
-        fields:
-          - { label: Nombre del apartado, name: nombre, widget: string, hint: "Título que se muestra en la página del apartado." }
-          - { label: Dirección, name: ruta, widget: string, hint: "Palabra que va después de ninfacantu.com/ (ej. archivo). Sin espacios ni acentos." }
-          - { label: Descripción, name: descripcion, widget: text }
-          - { label: Publicar el apartado, name: activo, widget: boolean, default: true }
-
       - name: sitio
         label: Ajustes del sitio
         file: content/datos/sitio.json
@@ -154,10 +145,11 @@ collections:
           - { label: Orden de los temas, name: categorias, widget: list, hint: "Orden en que aparecen los temas. Los tres primeros se muestran en la portada." }
 
   # ---------------- Apartado informativo (no aparece en el menú) ----------------
+  # Las etiquetas __NOMBRE_APARTADO__ las sustituye build.py con el nombre guardado en content/datos/apartado.json
   - name: apartado
-    label: Apartado informativo
-    label_singular: Nota del apartado
-    description: Notas que no se enlazan desde el menú ni desde ninguna página. Se publican en su propia dirección y se incluyen en el sitemap y en llms.txt para buscadores e IA.
+    label: "__NOMBRE_APARTADO__"
+    label_singular: Nota
+    description: "Notas que no se enlazan desde el menú ni desde ninguna página. Se publican en __RUTA_APARTADO__ y se incluyen en el sitemap y en llms.txt para buscadores e IA. Para cambiar el nombre o la dirección, abre «__NOMBRE_APARTADO__: nombre y dirección»."
     folder: content/apartado
     create: true
     extension: md
@@ -172,3 +164,17 @@ collections:
       - { label: Etiquetas, name: etiquetas, widget: list, required: false, hint: "Palabras clave separadas por coma." }
       - { label: No publicar todavía, name: borrador, widget: boolean, default: false, required: false }
       - { label: Contenido, name: body, widget: markdown }
+
+  - name: apartado_ajustes
+    label: "__NOMBRE_APARTADO__: nombre y dirección"
+    description: "Cambia aquí el nombre del apartado. Al guardar, el sitio se vuelve a publicar en uno o dos minutos; recarga /admin para ver el nombre nuevo en este menú."
+    editor: { preview: false }
+    files:
+      - name: apartado
+        label: Nombre y dirección
+        file: content/datos/apartado.json
+        fields:
+          - { label: Nombre del apartado, name: nombre, widget: string, hint: "Se usa como título de la página del apartado y en este menú de /admin." }
+          - { label: Dirección, name: ruta, widget: string, hint: "Palabra que va después de ninfacantu.com/ (ej. archivo). Sin espacios ni acentos." }
+          - { label: Descripción, name: descripcion, widget: text }
+          - { label: Publicar el apartado, name: activo, widget: boolean, default: true }
