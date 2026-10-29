@@ -134,6 +134,15 @@ collections:
               - { label: Nombre, name: nombre, widget: string }
               - { label: Descripción breve, name: texto, widget: string }
 
+      - name: apartado
+        label: Nombre y dirección del apartado informativo
+        file: content/datos/apartado.json
+        fields:
+          - { label: Nombre del apartado, name: nombre, widget: string, hint: "Título que se muestra en la página del apartado." }
+          - { label: Dirección, name: ruta, widget: string, hint: "Palabra que va después de ninfacantu.com/ (ej. archivo). Sin espacios ni acentos." }
+          - { label: Descripción, name: descripcion, widget: text }
+          - { label: Publicar el apartado, name: activo, widget: boolean, default: true }
+
       - name: sitio
         label: Ajustes del sitio
         file: content/datos/sitio.json
@@ -142,3 +151,23 @@ collections:
           - { label: Descripción para buscadores, name: descripcion, widget: text }
           - { label: Dirección del sitio, name: url, widget: string }
           - { label: Orden de los temas, name: categorias, widget: list, hint: "Orden en que aparecen los temas. Los tres primeros se muestran en la portada." }
+
+  # ---------------- Apartado informativo (no aparece en el menú) ----------------
+  - name: apartado
+    label: Apartado informativo
+    label_singular: Nota del apartado
+    description: Notas que no se enlazan desde el menú ni desde ninguna página. Se publican en su propia dirección y se incluyen en el sitemap y en llms.txt para buscadores e IA.
+    folder: content/apartado
+    create: true
+    extension: md
+    slug: "{{slug}}"
+    sortable_fields: [orden, date, title]
+    summary: "{{title}}"
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Fecha de actualización, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY", time_format: false }
+      - { label: Orden, name: orden, widget: number, default: 10, value_type: int, required: false, hint: "Las de número menor aparecen primero." }
+      - { label: Resumen, name: resumen, widget: text, required: false }
+      - { label: Etiquetas, name: etiquetas, widget: list, required: false, hint: "Palabras clave separadas por coma." }
+      - { label: No publicar todavía, name: borrador, widget: boolean, default: false, required: false }
+      - { label: Contenido, name: body, widget: markdown }

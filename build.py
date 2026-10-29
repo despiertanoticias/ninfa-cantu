@@ -165,8 +165,23 @@ def compilar():
         pag("nota.html", n.url, titulo=n.titulo, nota=n, relacionadas=relacionadas,
             anterior=notas[i + 1] if i + 1 < len(notas) else None, siguiente=notas[i - 1] if i > 0 else None)
 
-    # RSS, sitemap y robots
+    # Apartado informativo: no se enlaza desde el menú ni desde ninguna página,
+    # pero se publica, se incluye en el sitemap y en llms.txt para buscadores e IA.
     url_sitio = sitio.url.rstrip("/")
+    apartado = datos.get("apartado") or Obj()
+    ap_notas = cargar_apartado() if apartado.get("activo", True) else []
+    ap_base = "/" + slugify(apartado.get("ruta") or "archivo") + "/"
+    if ap_notas:
+        for x in ap_notas:
+            x.url = ap_base + x.slug + "/"
+        pag("apartado.html", ap_base, titulo=apartado.get("nombre") or "Archivo informativo",
+            descripcion=apartado.get("descripcion") or sitio.descripcion, apartado=apartado, ap_notas=ap_notas)
+        for x in ap_notas:
+            pag("apartado_nota.html", x.url, titulo=x.titulo, descripcion=x.resumen or x.titulo,
+                apartado=apartado, ap_base=ap_base, ap_nota=x, ap_notas=ap_notas)
+    escribir_llms(url_sitio, datos, notas, apartado, ap_base, ap_notas)
+
+    # RSS, sitemap y robots
     items = "".join(
         f"<item><title>{escape(n.titulo)}</title><link>{url_sitio}{n.url}</link><guid>{url_sitio}{n.url}</guid>"
         f"<pubDate>{format_datetime(dt.datetime.combine(n.fecha, dt.time(12), dt.timezone.utc))}</pubDate>"
@@ -174,10 +189,58 @@ def compilar():
     escribir("/feed.xml", f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{escape(sitio.titulo)}</title>'
                           f"<link>{url_sitio}/</link><description>{escape(sitio.descripcion)}</description><language>es-MX</language>{items}</channel></rss>")
     urls = ["/", "/biografia/", "/trayectoria/", "/noticias/", "/contacto/"] + [f"/noticias/{c.slug}/" for c in categorias] + [n.url for n in notas]
+    if ap_notas:
+        urls += [ap_base] + [x.url for x in ap_notas]
     escribir("/sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
              + "".join(f"<url><loc>{url_sitio}{u}</loc></url>" for u in urls) + "</urlset>")
     escribir("/robots.txt", f"User-agent: *\nDisallow: /admin/\nSitemap: {url_sitio}/sitemap.xml\n")
     print(f"Sitio compilado en _site/ con {len(notas)} notas y {len(categorias)} categorías.")
+
+
+def cargar_apartado():
+    """Notas del apartado informativo (content/apartado/*.md)."""
+    lista = []
+    for ruta in glob.glob(os.path.join(RAIZ, "content", "apartado", "*.md")):
+        fm, cuerpo = leer_md(ruta)
+        if fm.get("borrador"):
+            continue
+        lista.append(Obj(slug=os.path.basename(ruta)[:-3], titulo=fm.get("title", ""),
+                         fecha=a_fecha(fm.get("date", dt.date.today())), resumen=fm.get("resumen") or "",
+                         etiquetas=fm.get("etiquetas") or [], texto=cuerpo.strip(), html=md(cuerpo),
+                         orden=fm.get("orden") or 100))
+    lista.sort(key=lambda x: (x.orden, -x.fecha.toordinal()))
+    return lista
+
+
+def escribir_llms(url_sitio, datos, notas, apartado, ap_base, ap_notas):
+    """llms.txt (índice) y llms-full.txt (texto completo) para asistentes de IA."""
+    p, t = datos["perfil"], datos.get("trayectoria") or Obj(cargos=[])
+    cab = [f"# {p.nombre}", "", f"> {p.cargo_actual}. {p.bio_corta}", ""]
+    idx = cab + ["## Páginas principales",
+                 f"- [Biografía]({url_sitio}/biografia/): trayectoria personal y profesional",
+                 f"- [Trayectoria]({url_sitio}/trayectoria/): cargos ocupados",
+                 f"- [Noticias]({url_sitio}/noticias/): {len(notas)} notas con fuente enlazada", ""]
+    if ap_notas:
+        idx += [f"## {apartado.get('nombre') or 'Archivo informativo'}"]
+        idx += [f"- [{x.titulo}]({url_sitio}{x.url}): {x.resumen}" for x in ap_notas] + [""]
+    idx += ["## Noticias"] + [f"- [{n.titulo}]({url_sitio}{n.url}) ({n.fecha.isoformat()}): {n.resumen}" for n in notas]
+    idx += ["", "## Opcional", f"- [Texto completo]({url_sitio}/llms-full.txt)"]
+    escribir("/llms.txt", "\n".join(idx) + "\n")
+
+    sin_md = lambda h: re.sub(r"\n{3,}", "\n\n", re.sub(r"<[^>]+>", "", h)).strip()
+    full = cab + ["## Biografía", "", str(p.biografia or ""), "", "## Cargos"]
+    for c in t.cargos:
+        periodo = " ".join(x for x in [c.inicio, "a la fecha" if c.actual else (f"a {c.fin}" if c.fin else "")] if x)
+        full.append(f"- {c.cargo}, {c.institucion}" + (f" ({periodo})" if periodo else ""))
+    if ap_notas:
+        full += ["", f"## {apartado.get('nombre') or 'Archivo informativo'}"]
+        for x in ap_notas:
+            full += ["", f"### {x.titulo}", f"URL: {url_sitio}{x.url}", "", x.texto]
+    full += ["", "## Noticias"]
+    for n in notas:
+        full += ["", f"### {n.titulo}", f"Fecha: {n.fecha.isoformat()} | Tema: {n.categoria} | URL: {url_sitio}{n.url}",
+                 f"Fuente: {n.fuente_nombre} {n.fuente_url}".rstrip(), "", sin_md(n.html)]
+    escribir("/llms-full.txt", "\n".join(full) + "\n")
 
 
 def empaquetar():

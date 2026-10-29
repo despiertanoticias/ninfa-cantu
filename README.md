@@ -24,6 +24,10 @@ Cada cambio guardado en /admin se publica solo en uno o dos minutos.
 | Información de Ninfa › Ejes de trabajo y proyectos | Ejes e íconos, proyectos estratégicos | `content/datos/ejes.json` |
 | Información de Ninfa › Ajustes del sitio | Título, descripción y orden de temas | `content/datos/sitio.json` |
 
+## Apartado informativo (fuera del menú)
+
+`content/apartado/*.md` se publica en `ninfacantu.com/<ruta>/` (por defecto `/archivo/`). No se enlaza desde el menú ni desde ninguna página, pero sí aparece en `sitemap.xml`, `llms.txt` y `llms-full.txt`, y lleva datos estructurados (schema.org) para que buscadores y asistentes de IA lo lean. El nombre, la dirección y las notas se editan en /admin.
+
 ## Trabajar en local
 
 ```bash

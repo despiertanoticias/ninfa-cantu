@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block clase %}pag-inicio{% endblock %}
+{% block cabeza %}
+<script type="application/ld+json">
+{{ {"@context": "https://schema.org", "@type": "Person", "name": perfil.nombre, "jobTitle": perfil.cargo_actual,
+    "worksFor": {"@type": "GovernmentOrganization", "name": "Secretaría de Economía del Gobierno de Tamaulipas"},
+    "birthPlace": "Nuevo Laredo, Tamaulipas", "url": sitio.url, "image": sitio.url ~ perfil.foto,
+    "description": perfil.bio_corta} | tojson }}
+</script>
+{% endblock %}
 {% block contenido %}
 
 {% if ticker %}

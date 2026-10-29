@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block cabeza %}
+<script type="application/ld+json">
+{{ {"@context": "https://schema.org", "@type": "Article", "headline": ap_nota.titulo,
+    "description": ap_nota.resumen, "dateModified": ap_nota.fecha | iso, "inLanguage": "es-MX",
+    "url": sitio.url ~ ap_nota.url, "keywords": ap_nota.etiquetas | join(", "),
+    "about": {"@type": "Person", "name": perfil.nombre, "jobTitle": perfil.cargo_actual},
+    "publisher": {"@type": "Organization", "name": perfil.nombre, "url": sitio.url}} | tojson }}
+</script>
+{% endblock %}
+{% block contenido %}
+<article class="nota">
+  <header class="nota__cab contenedor">
+    <nav class="migas" aria-label="Ruta"><a href="/">Inicio</a><span aria-hidden="true">/</span><a href="{{ ap_base }}">{{ apartado.nombre or "Archivo informativo" }}</a></nav>
+    <h1 class="nota__titulo">{{ ap_nota.titulo }}</h1>
+    {% if ap_nota.resumen %}<p class="nota__resumen">{{ ap_nota.resumen }}</p>{% endif %}
+    <p class="nota__firma"><time datetime="{{ ap_nota.fecha | iso }}">Actualizado el {{ ap_nota.fecha | fecha }}</time>
+      {% if ap_nota.etiquetas %}<span>{{ ap_nota.etiquetas | join(", ") }}</span>{% endif %}</p>
+  </header>
+  <div class="contenedor contenedor--angosto">
+    <div class="prosa">{{ ap_nota.html | safe }}</div>
+  </div>
+  <div class="contenedor contenedor--angosto" style="margin: 48px auto 80px">
+    <a class="btn btn--linea" href="{{ ap_base }}">Ver todo el apartado</a>
+  </div>
+</article>
+{% endblock %}

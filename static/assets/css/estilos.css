@@ -384,3 +384,12 @@ p { margin: 0 0 1em; }
 .pie__legal p { margin: 0; }
 @media (max-width: 900px) { .pie__in { grid-template-columns: 1fr 1fr; } .pie__marca { grid-column: 1 / -1; } }
 @media (max-width: 520px) { .pie__in { grid-template-columns: 1fr; } .pie__marca img { height: 36px; } }
+
+/* ---------- Apartado informativo ---------- */
+.archivo { list-style: none; margin: 0; padding: 0; }
+.archivo li { padding: 26px 0; border-bottom: 1px solid var(--linea); }
+.archivo h2 { font-family: var(--serif); font-size: 1.45rem; margin-bottom: 8px; }
+.archivo h2 a { color: var(--tinta); text-decoration: none; }
+.archivo h2 a:hover { color: var(--guinda); }
+.archivo p { color: var(--gris); margin-bottom: 6px; }
+.archivo time { font-size: .8rem; font-weight: 700; color: var(--dorado-osc); }

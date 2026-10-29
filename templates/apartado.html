@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block cabeza %}
+<script type="application/ld+json">
+{{ {"@context": "https://schema.org", "@type": "CollectionPage", "name": apartado.nombre or "Archivo informativo",
+    "description": apartado.descripcion or "", "url": sitio.url ~ url,
+    "about": {"@type": "Person", "name": perfil.nombre, "jobTitle": perfil.cargo_actual},
+    "hasPart": ap_notas | map(attribute="titulo") | list} | tojson }}
+</script>
+{% endblock %}
+{% block contenido %}
+<header class="encabezado">
+  <div class="contenedor">
+    <h1>{{ apartado.nombre or "Archivo informativo" }}</h1>
+    {% if apartado.descripcion %}<p>{{ apartado.descripcion }}</p>{% endif %}
+  </div>
+</header>
+<section class="bloque bloque--corto">
+  <div class="contenedor contenedor--angosto">
+    <ul class="archivo">
+      {% for x in ap_notas %}
+      <li>
+        <h2><a href="{{ x.url }}">{{ x.titulo }}</a></h2>
+        {% if x.resumen %}<p>{{ x.resumen }}</p>{% endif %}
+        <time datetime="{{ x.fecha | iso }}">Actualizado el {{ x.fecha | fecha }}</time>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}
